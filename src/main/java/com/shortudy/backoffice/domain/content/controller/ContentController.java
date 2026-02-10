@@ -1,7 +1,10 @@
 package com.shortudy.backoffice.domain.content.controller;
 
+import com.shortudy.backoffice.domain.content.dto.request.CategoryCreateRequest;
+import com.shortudy.backoffice.domain.content.dto.request.KeywordCreateRequest;
 import com.shortudy.backoffice.domain.content.service.ContentService;
 import com.shortudy.backoffice.global.common.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +31,8 @@ public class ContentController {
      * 카테고리 추가
      */
     @PostMapping("/categories")
-    public ApiResponse<Void> addCategory(@RequestBody String name) {
-        contentService.addCategory(name);
+    public ApiResponse<Void> addCategory(@Valid @RequestBody CategoryCreateRequest request) {
+        contentService.addCategory(request.getName());
         return ApiResponse.success(null, "카테고리가 추가되었습니다.");
     }
 
@@ -37,8 +40,8 @@ public class ContentController {
      * 키워드 추가
      */
     @PostMapping("/keywords")
-    public ApiResponse<Void> addKeyword(@RequestBody String name) {
-        contentService.addKeyword(name);
+    public ApiResponse<Void> addKeyword(@Valid @RequestBody KeywordCreateRequest request) {
+        contentService.addKeyword(request.getDisplayName());
         return ApiResponse.success(null, "키워드가 추가되었습니다.");
     }
 }

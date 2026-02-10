@@ -1,7 +1,11 @@
 package com.shortudy.backoffice.domain.content.service;
 
+import com.shortudy.backoffice.domain.content.entity.Category;
+import com.shortudy.backoffice.domain.content.entity.Keyword;
 import com.shortudy.backoffice.domain.content.repository.CategoryRepository;
 import com.shortudy.backoffice.domain.content.repository.KeywordRepository;
+import com.shortudy.backoffice.global.error.BaseException;
+import com.shortudy.backoffice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +35,11 @@ public class ContentService {
      */
     @Transactional
     public void addCategory(String name) {
-        // TODO: 카테고리 생성 및 저장
+        String trimmedName = normalizeName(name);
+        if (categoryRepository.existsByName(trimmedName)) {
+            throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, "이미 존재하는 카테고리입니다.");
+        }
+        categoryRepository.save(Category.builder().name(trimmedName).build());
     }
 
     /**
@@ -39,6 +47,43 @@ public class ContentService {
      */
     @Transactional
     public void addKeyword(String name) {
-        // TODO: 키워드 생성 및 저장
+        String trimmedName = normalizeName(name);
+        if (keywordRepository.existsByName(trimmedName)) {
+            throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, "이미 존재하는 키워드입니다.");
+        }
+        keywordRepository.save(Keyword.builder().name(trimmedName).build());
+    }
+
+    /**
+     * 카테고리 삭제
+     */
+    @Transactional
+    public void deleteCategory(Long categoryId) {
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new BaseException(ErrorCode.CONTENT_NOT_FOUND);
+        }
+        categoryRepository.deleteById(categoryId);
+    }
+
+    /**
+     * 키워드 삭제
+     */
+    @Transactional
+    public void deleteKeyword(Long keywordId) {
+        if (!keywordRepository.existsById(keywordId)) {
+            throw new BaseException(ErrorCode.CONTENT_NOT_FOUND);
+        }
+        keywordRepository.deleteById(keywordId);
+    }
+
+    private String normalizeName(String name) {
+        if (name == null) {
+            throw new BaseException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+        String trimmed = name.trim();
+        if (trimmed.isEmpty()) {
+            throw new BaseException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+        return trimmed;
     }
 }

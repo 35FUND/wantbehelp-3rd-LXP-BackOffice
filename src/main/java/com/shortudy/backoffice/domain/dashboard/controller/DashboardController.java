@@ -1,5 +1,6 @@
 package com.shortudy.backoffice.domain.dashboard.controller;
 
+import com.shortudy.backoffice.domain.dashboard.dto.response.CategoryShortsCountResponse;
 import com.shortudy.backoffice.domain.dashboard.dto.response.DailyUploadCountResponse;
 import com.shortudy.backoffice.domain.dashboard.dto.response.PublishConversionRateResponse;
 import com.shortudy.backoffice.domain.dashboard.service.DashboardService;
@@ -47,5 +48,13 @@ public class DashboardController {
             @RequestParam(defaultValue = "30") int days
     ) {
         return ApiResponse.success(dashboardService.getConversionRate(days), "게시 전환율 조회 성공");
+    }
+
+    /**
+     * 카테고리별 쇼츠 수 조회
+     */
+    @GetMapping("/categories/shorts-count")
+    public ApiResponse<List<CategoryShortsCountResponse>> getCategoryShortsCount() {
+        return ApiResponse.success(dashboardService.getCategoryShortsCount(), "카테고리별 쇼츠 수 조회 성공");
     }
 }
