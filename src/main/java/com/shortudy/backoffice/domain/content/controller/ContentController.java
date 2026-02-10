@@ -27,21 +27,4 @@ public class ContentController {
         return ApiResponse.success(contentService.getContentDistribution(), "카테고리별 콘텐츠 분포 조회 성공");
     }
 
-    /**
-     * 카테고리 추가
-     */
-    @PostMapping("/categories")
-    public ApiResponse<Void> addCategory(@Valid @RequestBody CategoryCreateRequest request) {
-        contentService.addCategory(request.getName());
-        return ApiResponse.success(null, "카테고리가 추가되었습니다.");
-    }
-
-    /**
-     * 키워드 추가
-     */
-    @PostMapping("/keywords")
-    public ApiResponse<Void> addKeyword(@Valid @RequestBody KeywordCreateRequest request) {
-        contentService.addKeyword(request.getDisplayName());
-        return ApiResponse.success(null, "키워드가 추가되었습니다.");
-    }
 }
