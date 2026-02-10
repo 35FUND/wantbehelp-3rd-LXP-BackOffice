@@ -1,0 +1,4 @@
+# application-dev.yml을 만들어서 사용하시면 될 것 같습니다 !
+spring:
+  profiles:
+    active: dev
