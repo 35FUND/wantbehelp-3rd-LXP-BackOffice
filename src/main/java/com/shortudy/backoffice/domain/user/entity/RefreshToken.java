@@ -25,4 +25,17 @@ public class RefreshToken extends BaseEntity {
     private String token;
 
     protected RefreshToken() {}
+
+    private RefreshToken(Long userId, String token) {
+        this.userId = userId;
+        this.token = token;
+    }
+
+    public static RefreshToken create(Long userId, String token) {
+        return new RefreshToken(userId, token);
+    }
+
+    public void updateToken(String newToken) {
+        this.token = newToken;
+    }
 }
