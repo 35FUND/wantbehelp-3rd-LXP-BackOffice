@@ -1,8 +1,6 @@
 package com.shortudy.backoffice.global.common;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 /**
  * API 공통 응답 클래스
@@ -43,6 +41,13 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> success(T data) {
 
         return new ApiResponse<>(true, "Success", null, data);
+    }
+
+    /**
+     * 성공 응답 (데이터 + 메시지)
+     */
+    public static <T> ApiResponse<T> success(T data, String message) {
+        return new ApiResponse<>(true, "Success", message, data);
     }
 
     /**
