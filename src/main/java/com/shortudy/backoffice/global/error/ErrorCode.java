@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 /**
  * 전역 에러 코드 정의
  */
-@Getter
-@RequiredArgsConstructor
 public enum ErrorCode {
     // Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "C001", " 올바르지 않은 입력값입니다."),
@@ -22,4 +20,22 @@ public enum ErrorCode {
     private final HttpStatus status;
     private final String code;
     private final String message;
+
+    ErrorCode(HttpStatus status, String code, String message) {
+        this.status = status;
+        this.code = code;
+        this.message = message;
+    }
+
+    public HttpStatus status() {
+        return status;
+    }
+
+    public String code() {
+        return code;
+    }
+
+    public String message() {
+        return message;
+    }
 }
