@@ -1,10 +1,14 @@
 package com.shortudy.backoffice.global.error;
 
 import com.shortudy.backoffice.global.common.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
  * 전역 예외 처리기
@@ -13,20 +17,51 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BusinessException.class)
-    protected ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
-        log.error("BusinessException: {}", e.getErrorCode().getMessage());
-        ErrorCode errorCode = e.getErrorCode();
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(ApiResponse.error(errorCode.getMessage()));
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ApiResponse<?>> handleBaseException(BaseException e, HttpServletRequest request) {
+        return error(e.errorCode(), e.getMessage(), request);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e,
+            HttpServletRequest request
+    ) {
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .orElse(ErrorCode.INVALID_INPUT_VALUE.message());
+
+        return error(ErrorCode.INVALID_INPUT_VALUE, message, request);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<?>> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException e,
+            HttpServletRequest request
+    ) {
+        return error(ErrorCode.INVALID_INPUT_VALUE, "요청 파라미터 타입이 올바르지 않습니다.", request);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<?>> handleMethodNotAllowed(
+            HttpRequestMethodNotSupportedException e,
+            HttpServletRequest request
+    ) {
+        return error(ErrorCode.METHOD_NOT_ALLOWED, ErrorCode.METHOD_NOT_ALLOWED.message(), request);
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
-        log.error("Exception: ", e);
-        return ResponseEntity
-                .status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
-                .body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
+    public ResponseEntity<ApiResponse<?>> handleException(Exception e, HttpServletRequest request) {
+        log.error("예기치 못한 오류. path={}", request.getRequestURI(), e);
+        return error(ErrorCode.INTERNAL_SERVER_ERROR, ErrorCode.INTERNAL_SERVER_ERROR.message(), request);
+    }
+
+    /**
+     * 공통 에러 응답 생성
+     */
+    private ResponseEntity<ApiResponse<?>> error(ErrorCode errorCode, String message, HttpServletRequest request) {
+        return ResponseEntity.status(errorCode.status())
+                .body(ApiResponse.error(errorCode.code(), message, request.getRequestURI()));
     }
 }
