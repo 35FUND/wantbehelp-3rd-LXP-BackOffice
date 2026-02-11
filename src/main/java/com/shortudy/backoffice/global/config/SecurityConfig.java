@@ -4,6 +4,7 @@ import com.shortudy.backoffice.global.security.JwtTokenProvider;
 import com.shortudy.backoffice.global.security.filter.JwtAuthenticationFilter;
 import com.shortudy.backoffice.global.security.handler.CustomAccessDeniedHandler;
 import com.shortudy.backoffice.global.security.handler.CustomAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,8 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +31,9 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+
+    @Value("${app.cors.allowed-origins:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000}")
+    private String allowedOrigins;
 
     public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomAuthenticationEntryPoint authenticationEntryPoint, CustomAccessDeniedHandler accessDeniedHandler) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -49,7 +58,7 @@ public class SecurityConfig {
                 // 브라우저 쿠키를 가로채서 공격하는 CSRF 방어 기능은 꺼두겠다.
                 .csrf(AbstractHttpConfigurer::disable)
                 // TODO CORS 설정이 필요하면 수정
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 // 세션을 만들지 않겠다(STATELESS) -> 서버가 사용자의 상태를 저장하지 않고, 오직 토큰만 보고 판단
                 .sessionManagement(session -> {session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);})
                 // 요청 권한 제어 -> 누구에게 열어줄 것인가.
@@ -76,6 +85,27 @@ public class SecurityConfig {
                 .addFilterBefore(characterEncodingFilter, JwtAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(parseAllowedOrigins());
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    private List<String> parseAllowedOrigins() {
+        return Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .toList();
     }
 
 //    TODO CORS설정이 필요할 때 주석 해제
