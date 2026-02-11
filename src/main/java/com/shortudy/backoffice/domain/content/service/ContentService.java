@@ -1,5 +1,7 @@
 package com.shortudy.backoffice.domain.content.service;
 
+import com.shortudy.backoffice.domain.content.dto.response.CategoryListResponse;
+import com.shortudy.backoffice.domain.content.dto.response.KeywordListResponse;
 import com.shortudy.backoffice.domain.content.entity.Category;
 import com.shortudy.backoffice.domain.content.entity.Keyword;
 import com.shortudy.backoffice.domain.content.repository.CategoryRepository;
@@ -9,6 +11,10 @@ import com.shortudy.backoffice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 콘텐츠 관리 서비스
@@ -28,6 +34,26 @@ public class ContentService {
     public Object getContentDistribution() {
         // TODO: 카테고리별 콘텐츠 카운트 로직 구현
         return null;
+    }
+
+    /**
+     * 카테고리 목록 조회
+     */
+    public List<CategoryListResponse> getCategories() {
+        return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
+                .stream()
+                .map(CategoryListResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 키워드 목록 조회
+     */
+    public List<KeywordListResponse> getKeywords() {
+        return keywordRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
+                .stream()
+                .map(KeywordListResponse::from)
+                .collect(Collectors.toList());
     }
 
     /**
