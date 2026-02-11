@@ -1,5 +1,7 @@
 package com.shortudy.backoffice.domain.content.service;
 
+import com.shortudy.backoffice.domain.content.dto.response.CategoryListResponse;
+import com.shortudy.backoffice.domain.content.dto.response.KeywordListResponse;
 import com.shortudy.backoffice.domain.content.entity.Category;
 import com.shortudy.backoffice.domain.content.entity.Keyword;
 import com.shortudy.backoffice.domain.content.repository.CategoryRepository;
@@ -9,6 +11,10 @@ import com.shortudy.backoffice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Sort;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 콘텐츠 관리 서비스
@@ -31,6 +37,26 @@ public class ContentService {
     }
 
     /**
+     * 카테고리 목록 조회
+     */
+    public List<CategoryListResponse> getCategories() {
+        return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
+                .stream()
+                .map(CategoryListResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 키워드 목록 조회
+     */
+    public List<KeywordListResponse> getKeywords() {
+        return keywordRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
+                .stream()
+                .map(KeywordListResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 카테고리 추가
      */
     @Transactional
@@ -47,11 +73,15 @@ public class ContentService {
      */
     @Transactional
     public void addKeyword(String name) {
-        String trimmedName = normalizeName(name);
-        if (keywordRepository.existsByName(trimmedName)) {
+        String displayName = normalizeName(name);
+        String normalizedName = normalizeKeyword(displayName);
+        if (keywordRepository.existsByNormalizedName(normalizedName)) {
             throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, "이미 존재하는 키워드입니다.");
         }
-        keywordRepository.save(Keyword.builder().name(trimmedName).build());
+        keywordRepository.save(Keyword.builder()
+                .displayName(displayName)
+                .normalizedName(normalizedName)
+                .build());
     }
 
     /**
@@ -85,5 +115,12 @@ public class ContentService {
             throw new BaseException(ErrorCode.INVALID_INPUT_VALUE);
         }
         return trimmed;
+    }
+
+    private String normalizeKeyword(String displayName) {
+        return displayName
+                .toLowerCase()
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 }
