@@ -30,7 +30,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<UserProjection> findAllUsers() {
 
-        List<UserProjection> userProjections = userRepository.findAllUserDetailForAdmin(UserRole.USER);
+        List<UserProjection> userProjections = userRepository.findAllByRole(UserRole.USER);
 
         return userProjections;
     }

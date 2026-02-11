@@ -46,6 +46,10 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @CreatedDate
+    @Column(nullable = false)
+    private LocalDateTime lastLoginAt;
+
     protected User() {}
 
     public void updateUserRole(UserRole role) {

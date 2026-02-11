@@ -28,12 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<DailyUserCount> countDailyUsers(@Param("from") LocalDateTime from,
                                          @Param("to") LocalDateTime to);
 
-    @Query("SELECT u.email as email, u.nickname as nickname, u.role as role, u.role as userRole, " +
-            "u.status as status, u.status as userStatus, r.updatedAt as updatedAt " +
-            "FROM User u " +
-            "LEFT JOIN RefreshToken r ON u.id = r.userId " +
-            "WHERE u.role = :role")
-    List<UserProjection> findAllUserDetailForAdmin(@Param("role") UserRole role);
+    List<UserProjection> findAllByRole(UserRole role);
 
     Optional<User> findByEmail(String email);
 

@@ -33,7 +33,7 @@ public class UserController {
     /**
      * 특정 유저 정보 수정 (유저 상태 ACTIVE, INACTIVE, DELETED)
      */
-    @PatchMapping("/{memberId}")
+    @PatchMapping("/{userId}")
     public ApiResponse<Void> updateMember(@PathVariable Long userId, @RequestBody UpdateRequest updateRequest) {
         userService.updateMember(userId, updateRequest);
         return ApiResponse.success(null, "유저 정보가 수정되었습니다.");
