@@ -67,9 +67,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/login").permitAll()
                         .requestMatchers("/api/v1/auth/refresh").permitAll()
 
-                        // 아래 요청에는 ADMIN이라는 역할이 필요하다.
-                        .requestMatchers(HttpMethod.POST, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
+                        // 아래 요청은 원래 ADMIN 권한이 필요하다.
+                        // 테스트 중에는 저장/삭제 동작 확인을 위해 임시로 permitAll 처리한다.
+                        // .requestMatchers(HttpMethod.POST, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
+                        // .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/categories/**", "/api/v1/keywords/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**", "/api/v1/keywords/**").permitAll()
 
                         // 테스트 중에는 전체 API를 허용한다.
                         .anyRequest().permitAll()
