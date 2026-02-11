@@ -47,11 +47,15 @@ public class ContentService {
      */
     @Transactional
     public void addKeyword(String name) {
-        String trimmedName = normalizeName(name);
-        if (keywordRepository.existsByName(trimmedName)) {
+        String displayName = normalizeName(name);
+        String normalizedName = normalizeKeyword(displayName);
+        if (keywordRepository.existsByNormalizedName(normalizedName)) {
             throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, "이미 존재하는 키워드입니다.");
         }
-        keywordRepository.save(Keyword.builder().name(trimmedName).build());
+        keywordRepository.save(Keyword.builder()
+                .displayName(displayName)
+                .normalizedName(normalizedName)
+                .build());
     }
 
     /**
@@ -85,5 +89,12 @@ public class ContentService {
             throw new BaseException(ErrorCode.INVALID_INPUT_VALUE);
         }
         return trimmed;
+    }
+
+    private String normalizeKeyword(String displayName) {
+        return displayName
+                .toLowerCase()
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 }

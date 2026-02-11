@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Getter
-@Table(name = "keywords")
+@Table(name = "keyword")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Keyword extends BaseEntity {
 
@@ -21,15 +21,20 @@ public class Keyword extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Column(name = "display_name", nullable = false, length = 50)
+    private String displayName;
+
+    @Column(name = "normalized_name", nullable = false, length = 50, unique = true)
+    private String normalizedName;
 
     @Builder
-    public Keyword(String name) {
-        this.name = name;
+    public Keyword(String displayName, String normalizedName) {
+        this.displayName = displayName;
+        this.normalizedName = normalizedName;
     }
 
-    public void updateName(String name) {
-        this.name = name;
+    public void updateDisplayName(String displayName, String normalizedName) {
+        this.displayName = displayName;
+        this.normalizedName = normalizedName;
     }
 }
