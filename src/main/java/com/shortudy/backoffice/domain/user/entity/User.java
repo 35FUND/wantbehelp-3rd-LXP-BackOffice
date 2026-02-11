@@ -30,7 +30,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private UserRole role;
 
-    // 전체 url이 아닌 profile image key 값만 저장
     @Column
     private String profileUrl;
 
@@ -46,8 +45,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @CreatedDate
-    @Column(nullable = false)
     private LocalDateTime lastLoginAt;
 
     protected User() {}
