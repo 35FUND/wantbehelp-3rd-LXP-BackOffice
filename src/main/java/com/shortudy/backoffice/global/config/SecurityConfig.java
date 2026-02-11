@@ -57,25 +57,9 @@ public class SecurityConfig {
                         // .permitAll() -> 누구나 접근할 수 있는 권한 제어
                         .requestMatchers("/api/v1/auth/login").permitAll()
                         .requestMatchers("/api/v1/auth/refresh").permitAll()
-                        .requestMatchers("/api/v1/users").permitAll()
-
-                        // .authenticated() -> 해당 요청은 인증이 필요하다
-                        .requestMatchers(HttpMethod.GET, "/api/v1/shorts/me").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/shorts/*/upload-status").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/playlists/me/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/me/likes/shorts").authenticated()
-
-                        // GET 요청의 특정 데이터 조회는 누구나 가능하다.
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/v1/shorts/**",
-                                "/api/v1/categories/**",
-                                "/api/v1/comments/**",
-                                "/api/v1/keywords/**",
-                                "/api/v1/playlists/**").permitAll()
 
                         // 아래 요청에는 ADMIN이라는 역할이 필요하다.
                         .requestMatchers(HttpMethod.POST, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
 
                         // 의외에 모든 요청에는 반드시 토큰 검증이 필요하다.
