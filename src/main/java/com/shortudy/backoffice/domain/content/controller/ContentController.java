@@ -1,10 +1,7 @@
 package com.shortudy.backoffice.domain.content.controller;
 
-import com.shortudy.backoffice.domain.content.dto.request.CategoryCreateRequest;
-import com.shortudy.backoffice.domain.content.dto.request.KeywordCreateRequest;
 import com.shortudy.backoffice.domain.content.service.ContentService;
 import com.shortudy.backoffice.global.common.ApiResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
