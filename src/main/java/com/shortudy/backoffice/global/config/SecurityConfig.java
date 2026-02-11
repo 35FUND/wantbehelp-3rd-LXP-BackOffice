@@ -67,6 +67,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/login").permitAll()
                         .requestMatchers("/api/v1/auth/refresh").permitAll()
 
+                        // 백오피스 신고 관리 API는 운영 시 관리자 권한으로 제한한다.
+                        // .requestMatchers("/api/v1/backoffice/comment-reports/**").hasRole("ADMIN")
+                        // 현재 연동 테스트를 위해 임시 허용한다.
+                        .requestMatchers("/api/v1/backoffice/comment-reports/**").permitAll()
+
                         // 아래 요청은 원래 ADMIN 권한이 필요하다.
                         // 테스트 중에는 저장/삭제 동작 확인을 위해 임시로 permitAll 처리한다.
                         // .requestMatchers(HttpMethod.POST, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")

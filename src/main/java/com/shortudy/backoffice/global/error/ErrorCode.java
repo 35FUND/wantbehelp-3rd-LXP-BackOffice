@@ -26,7 +26,13 @@ public enum ErrorCode {
 
     // Domain Specific
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "M001", " 사용자를 찾을 수 없습니다."),
-    CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "C101", " 콘텐츠를 찾을 수 없습니다.");
+    CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "C101", " 콘텐츠를 찾을 수 없습니다."),
+
+    // Comment Report
+    COMMENT_REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "CR001", " 신고 내역을 찾을 수 없습니다."),
+    COMMENT_ALREADY_REPORTED(HttpStatus.CONFLICT, "CR002", " 이미 신고한 댓글입니다."),
+    COMMENT_REPORT_FORBIDDEN(HttpStatus.FORBIDDEN, "CR003", " 본인 댓글은 신고할 수 없습니다."),
+    COMMENT_REPORT_ALREADY_HANDLED(HttpStatus.CONFLICT, "CR004", " 이미 처리된 신고입니다.");
 
     private final HttpStatus status;
     private final String code;

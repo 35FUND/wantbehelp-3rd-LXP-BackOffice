@@ -10,6 +10,7 @@ import com.shortudy.backoffice.domain.user.repository.UserRepository;
 import com.shortudy.backoffice.global.error.BaseException;
 import com.shortudy.backoffice.global.error.ErrorCode;
 import com.shortudy.backoffice.global.security.JwtTokenProvider;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,11 +23,18 @@ public class AuthService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtTokenProvider jwtTokenProvider) {
+    public AuthService(
+            UserRepository userRepository,
+            RefreshTokenRepository refreshTokenRepository,
+            JwtTokenProvider jwtTokenProvider,
+            PasswordEncoder passwordEncoder
+    ) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -37,8 +45,10 @@ public class AuthService {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
 
-        // TODO: 비밀번호 검증 로직 (BCrypt 등 적용 필요)
-        if (!user.getPassword().equals(request.password())) {
+        // bcrypt 해시 저장을 기본으로 검증하고, 레거시 평문 데이터는 임시 호환한다.
+        boolean matches = passwordEncoder.matches(request.password(), user.getPassword())
+                || user.getPassword().equals(request.password());
+        if (!matches) {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
 

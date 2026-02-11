@@ -1,6 +1,8 @@
 package com.shortudy.backoffice.domain.comment.entity;
 
 import com.shortudy.backoffice.global.common.BaseEntity;
+import com.shortudy.backoffice.global.error.BaseException;
+import com.shortudy.backoffice.global.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,6 +44,18 @@ public class CommentReport extends BaseEntity {
     }
 
     public void process() {
+        validateNotHandled();
         this.status = ReportStatus.PROCESSED;
+    }
+
+    public void reject() {
+        validateNotHandled();
+        this.status = ReportStatus.REJECTED;
+    }
+
+    private void validateNotHandled() {
+        if (this.status == ReportStatus.PROCESSED || this.status == ReportStatus.REJECTED) {
+            throw new BaseException(ErrorCode.COMMENT_REPORT_ALREADY_HANDLED);
+        }
     }
 }
