@@ -1,7 +1,9 @@
 package com.shortudy.backoffice.domain.dashboard.service;
 
 import com.shortudy.backoffice.domain.content.entity.ShortsStatus;
+import com.shortudy.backoffice.domain.content.repository.CategoryRepository;
 import com.shortudy.backoffice.domain.content.repository.ShortsRepository;
+import com.shortudy.backoffice.domain.dashboard.dto.response.CategoryShortsCountResponse;
 import com.shortudy.backoffice.domain.dashboard.dto.response.DailyUploadCountResponse;
 import com.shortudy.backoffice.domain.dashboard.dto.response.PublishConversionRateResponse;
 import com.shortudy.backoffice.global.error.BaseException;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 대시보드 통계 서비스
@@ -31,6 +34,7 @@ public class DashboardService {
     private static final ZoneId KOREA_ZONE = ZoneId.of("Asia/Seoul");
 
     private final ShortsRepository shortsRepository;
+    private final CategoryRepository categoryRepository;
 
     /**
      * 일 단위 업로드 수 조회 (민수)
@@ -70,6 +74,16 @@ public class DashboardService {
                 .publishedCount(publishedCount)
                 .conversionRate(conversionRate)
                 .build();
+    }
+
+    /**
+     * 카테고리별 쇼츠 수 조회
+     */
+    public List<CategoryShortsCountResponse> getCategoryShortsCount() {
+        return categoryRepository.findCategoryShortsCounts(ShortsStatus.PUBLISHED)
+                .stream()
+                .map(CategoryShortsCountResponse::from)
+                .collect(Collectors.toList());
     }
 
     private int normalizeDays(int days) {
