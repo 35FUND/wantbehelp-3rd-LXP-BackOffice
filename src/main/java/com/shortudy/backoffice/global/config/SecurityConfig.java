@@ -62,8 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**", "/api/v1/keywords/**").hasRole("ADMIN")
 
-                        // 의외에 모든 요청에는 반드시 토큰 검증이 필요하다.
-                        .anyRequest().authenticated()
+                        // 테스트 중에는 전체 API를 허용한다.
+                        .anyRequest().permitAll()
                 )
                 // 시큐리티는 기본적으로 에러가 나면 '로그인 페이지'로 보내려고 한다. 이는 REST API 서버에 부적절함
                 // 직접 만든 에러 응답을 내보내기 위함

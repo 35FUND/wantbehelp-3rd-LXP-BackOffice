@@ -12,6 +12,9 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByName(String name);
 
+    // 카테고리 관리 화면 조회용
+    java.util.List<Category> findAllByOrderByNameAsc();
+
     @Query("""
             select c.id as categoryId,
                    c.name as categoryName,
