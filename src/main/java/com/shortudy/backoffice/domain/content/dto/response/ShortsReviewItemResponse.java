@@ -20,6 +20,7 @@ public class ShortsReviewItemResponse {
     private Long categoryId;
     private String title;
     private ShortsStatus status;
+    private String shortsStatusDescription;
     private String videoUrl;
     private LocalDateTime createdAt;
     private ShortsInspectionResultResponse inspectionResult;
@@ -32,9 +33,23 @@ public class ShortsReviewItemResponse {
                 .categoryId(shorts.getCategoryId())
                 .title(shorts.getTitle())
                 .status(shorts.getStatus())
+                .shortsStatusDescription(resolveShortsStatusDescription(shorts.getStatus(), latestResult))
                 .videoUrl(shorts.getVideoUrl())
                 .createdAt(shorts.getCreatedAt())
                 .inspectionResult(latestResult == null ? null : ShortsInspectionResultResponse.from(latestResult))
                 .build();
+    }
+
+    private static String resolveShortsStatusDescription(ShortsStatus status, ShortsInspectionResult latestResult) {
+        if (status == ShortsStatus.REJECT) {
+            String rejectReason = latestResult == null ? null : latestResult.getReason();
+            return (rejectReason == null || rejectReason.isBlank()) ? status.getDescription() : rejectReason;
+        }
+
+        if (status == ShortsStatus.AI_CHECK) {
+            return "AI심사";
+        }
+
+        return status.getDescription();
     }
 }
