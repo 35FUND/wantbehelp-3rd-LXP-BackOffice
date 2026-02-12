@@ -1,0 +1,13 @@
+.git
+.gradle
+build
+out
+
+.idea
+.vscode
+
+*.iml
+*.log
+*.tmp
+
+src/test
