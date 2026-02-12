@@ -12,7 +12,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "refreshtokens")
-public class RefreshToken extends BaseEntity {
+public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

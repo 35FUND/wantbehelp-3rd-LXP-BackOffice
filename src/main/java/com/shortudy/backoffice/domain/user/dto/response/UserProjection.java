@@ -9,7 +9,8 @@ public interface UserProjection {
 
     String getEmail();
     String getNickname();
-    UserRole getUserRole();
-    UserStatus getUserStatus();
-    LocalDateTime getUpdatedAt();
+    UserRole getRole();
+    UserStatus getStatus();
+    LocalDateTime getCreatedAt();
+    LocalDateTime getLastLoginAt();
 }
