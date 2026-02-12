@@ -3,6 +3,8 @@ package com.shortudy.backoffice.domain.content.repository;
 import com.shortudy.backoffice.domain.content.entity.Shorts;
 import com.shortudy.backoffice.domain.content.entity.ShortsStatus;
 import com.shortudy.backoffice.domain.dashboard.dto.response.DailyUploadCountResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +16,25 @@ import java.util.List;
  * 숏츠 조회 저장소
  */
 public interface ShortsRepository extends JpaRepository<Shorts, Long> {
+
+    /**
+     * 임시 자동 검수 폴링 대상(PENDING + videoUrl 존재) 목록을 생성일 오름차순으로 조회한다.
+     */
+    List<Shorts> findByStatusAndVideoUrlIsNotNullOrderByCreatedAtAsc(ShortsStatus status, Pageable pageable);
+
+    @Query(
+            value = """
+                    select s
+                    from Shorts s
+                    where (:status is null or s.status = :status)
+                    """,
+            countQuery = """
+                    select count(s)
+                    from Shorts s
+                    where (:status is null or s.status = :status)
+                    """
+    )
+    Page<Shorts> findByStatusFilter(@Param("status") ShortsStatus status, Pageable pageable);
 
     /**
      * 특정 상태의 숏츠 개수를 조회한다.

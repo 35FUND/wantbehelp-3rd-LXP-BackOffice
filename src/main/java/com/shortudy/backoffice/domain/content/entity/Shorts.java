@@ -90,4 +90,27 @@ public class Shorts extends BaseEntity {
         this.publishedAt = publishedAt;
         this.status = status;
     }
+
+    /**
+     * 검수 상태를 변경한다.
+     */
+    public void changeStatus(ShortsStatus status) {
+        this.status = status;
+
+        if (status == ShortsStatus.PUBLISHED) {
+            if (this.publishedAt == null) {
+                this.publishedAt = LocalDateTime.now();
+            }
+            return;
+        }
+
+        this.publishedAt = null;
+    }
+
+    /**
+     * AI 검수 진행 상태로 전환한다.
+     */
+    public void markAiCheck() {
+        this.status = ShortsStatus.AI_CHECK;
+    }
 }

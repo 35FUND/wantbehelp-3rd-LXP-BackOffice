@@ -16,6 +16,7 @@ public class BackofficeCommentReportSummaryResponse {
     private Long reportId;
     private Long commentId;
     private Long reporterId;
+    private String reporterName;
     private String reason;
     private ReportStatus status;
     private LocalDateTime createdAt;
@@ -25,11 +26,12 @@ public class BackofficeCommentReportSummaryResponse {
     private Long commentWriterId;
     private Long shortsId;
 
-    public static BackofficeCommentReportSummaryResponse from(CommentReport report) {
+    public static BackofficeCommentReportSummaryResponse from(CommentReport report, String reporterName) {
         return BackofficeCommentReportSummaryResponse.builder()
                 .reportId(report.getId())
                 .commentId(report.getCommentId())
                 .reporterId(report.getReporterId())
+                .reporterName(reporterName)
                 .reason(report.getReason())
                 .status(report.getStatus())
                 .createdAt(report.getCreatedAt())

@@ -1,1 +1,37 @@
-# application-dev의 예시를 저장하는 파일
+# 로컬 개발용 DB 설정 예시
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:shortudy}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: your-password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: Asia/Seoul
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+  ai-inspection:
+    # 임시 폴링 기반 자동 검수 설정 (이벤트 기반 파이프라인 완성 후 제거 예정)
+    polling-enabled: true
+    polling-interval-ms: 5000
+    polling-initial-delay-ms: 10000
+    polling-batch-size: 3
+
+jwt:
+  secret: VGhpc0lzQVNlY3JldEtleUZvckxvY2FsRGV2ZWxvcG1lbnRBbmRJdFNob3VsZEJlTG9uZ0Vub3VnaFRvV29ya1dpdGhITUFDU0hBMjU2
+  access-expiration: 3600000
+  refresh-expiration: 1209600000
+

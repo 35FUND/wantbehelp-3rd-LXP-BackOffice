@@ -1,4 +1,47 @@
-# application-dev.yml을 만들어서 사용하시면 될 것 같습니다 !
+server:
+  port: ${SERVER_PORT:8081}
+
 spring:
-  profiles:
-    active: dev
+  datasource:
+    url: ${DB_URL:jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:shortudy}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:wlalstn12}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: Asia/Seoul
+
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000}
+  ai-inspection:
+    # 임시 폴링 기반 자동 검수 설정 (이벤트 기반 파이프라인 완성 후 제거 예정)
+    polling-enabled: ${AI_INSPECTION_POLLING_ENABLED:true}
+    polling-interval-ms: ${AI_INSPECTION_POLLING_INTERVAL_MS:5000}
+    polling-initial-delay-ms: ${AI_INSPECTION_POLLING_INITIAL_DELAY_MS:10000}
+    polling-batch-size: ${AI_INSPECTION_POLLING_BATCH_SIZE:3}
+  upload:
+    profile:
+      max-file-size: 10MB
+  cookie:
+    same-site: Lax
+    secure: false
+    # 프로덕션 환경에서는 아래와 같이 변경:keywords
+    # same-site: None
+    # secure: true
+
+jwt:
+  secret: VGhpc0lzQVNlY3JldEtleUZvckxvY2FsRGV2ZWxvcG1lbnRBbmRJdFNob3VsZEJlTG9uZ0Vub3VnaFRvV29ya1dpdGhITUFDU0hBMjU2
+  access-expiration: 3600000
+  refresh-expiration: 1209600000
+

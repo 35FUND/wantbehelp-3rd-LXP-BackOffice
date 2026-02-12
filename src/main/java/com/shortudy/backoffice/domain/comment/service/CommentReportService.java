@@ -5,6 +5,8 @@ import com.shortudy.backoffice.domain.comment.dto.response.BackofficePageRespons
 import com.shortudy.backoffice.domain.comment.entity.CommentReport;
 import com.shortudy.backoffice.domain.comment.entity.ReportStatus;
 import com.shortudy.backoffice.domain.comment.repository.CommentReportRepository;
+import com.shortudy.backoffice.domain.user.entity.User;
+import com.shortudy.backoffice.domain.user.repository.UserRepository;
 import com.shortudy.backoffice.global.error.BaseException;
 import com.shortudy.backoffice.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 댓글 신고 서비스
@@ -25,6 +29,7 @@ import java.util.List;
 public class CommentReportService {
 
     private final CommentReportRepository commentReportRepository;
+    private final UserRepository userRepository;
 
     /**
      * 모든 신고 목록을 조회합니다.
@@ -43,8 +48,21 @@ public class CommentReportService {
     ) {
         Page<CommentReport> reports = commentReportRepository.search(status, keyword, pageable);
 
+        List<Long> reporterIds = reports.getContent().stream()
+                .map(CommentReport::getReporterId)
+                .distinct()
+                .toList();
+        Map<Long, String> reporterNameById = userRepository.findByIdIn(reporterIds)
+                .stream()
+                .collect(Collectors.toMap(User::getId, User::getNickname));
+
         return BackofficePageResponse.<BackofficeCommentReportSummaryResponse>builder()
-                .content(reports.getContent().stream().map(BackofficeCommentReportSummaryResponse::from).toList())
+                .content(reports.getContent().stream()
+                        .map(report -> BackofficeCommentReportSummaryResponse.from(
+                                report,
+                                reporterNameById.get(report.getReporterId())
+                        ))
+                        .toList())
                 .page(reports.getNumber())
                 .size(reports.getSize())
                 .totalElements(reports.getTotalElements())
@@ -58,7 +76,11 @@ public class CommentReportService {
      * 백오피스 신고 단건 상세 조회
      */
     public BackofficeCommentReportSummaryResponse findBackofficeReport(Long reportId) {
-        return BackofficeCommentReportSummaryResponse.from(getReportOrThrow(reportId));
+        CommentReport report = getReportOrThrow(reportId);
+        String reporterName = userRepository.findById(report.getReporterId())
+                .map(User::getNickname)
+                .orElse(null);
+        return BackofficeCommentReportSummaryResponse.from(report, reporterName);
     }
 
     /**
