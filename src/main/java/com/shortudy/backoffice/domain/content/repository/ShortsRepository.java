@@ -18,9 +18,9 @@ import java.util.List;
 public interface ShortsRepository extends JpaRepository<Shorts, Long> {
 
     /**
-     * 임시 자동 검수 폴링 대상(PENDING + videoUrl 존재) 목록을 생성일 오름차순으로 조회한다.
+     * 임시 자동 검수 폴링 대상(PENDING + videoUrl 존재) 목록을 ID 오름차순으로 조회한다.
      */
-    List<Shorts> findByStatusAndVideoUrlIsNotNullOrderByCreatedAtAsc(ShortsStatus status, Pageable pageable);
+    List<Shorts> findByStatusAndVideoUrlIsNotNullOrderByIdAsc(ShortsStatus status, Pageable pageable);
 
     @Query(
             value = """

@@ -93,10 +93,24 @@ public class ShortsReviewService {
         }
 
         Pageable pageable = PageRequest.of(0, limit);
-        return shortsRepository.findByStatusAndVideoUrlIsNotNullOrderByCreatedAtAsc(ShortsStatus.PENDING, pageable)
+        return shortsRepository.findByStatusAndVideoUrlIsNotNullOrderByIdAsc(ShortsStatus.PENDING, pageable)
                 .stream()
                 .map(Shorts::getId)
                 .toList();
+    }
+
+    /**
+     * 임시 폴링 정책: AI 호출 실패 시 재시도 무한 루프를 방지하기 위해
+     * PENDING 대상을 AI_CHECK로 전환해 큐에서 제외한다.
+     */
+    @Transactional
+    public void markAsAiCheckAfterFailedInspection(Long shortsId) {
+        shortsRepository.findById(shortsId)
+                .ifPresent(shorts -> {
+                    if (shorts.getStatus() == ShortsStatus.PENDING) {
+                        shorts.markAiCheck();
+                    }
+                });
     }
 
     @Transactional

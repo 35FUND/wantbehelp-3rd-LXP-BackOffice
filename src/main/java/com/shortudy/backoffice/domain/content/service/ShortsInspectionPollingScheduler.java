@@ -46,6 +46,8 @@ public class ShortsInspectionPollingScheduler {
                 shortsReviewService.triggerInspection(shortsId);
             } catch (Exception e) {
                 log.error("[TEMP-POLLING] shortsId={} 자동 검수 실패", shortsId, e);
+                shortsReviewService.markAsAiCheckAfterFailedInspection(shortsId);
+                log.warn("[TEMP-POLLING] shortsId={} 실패 건을 AI_CHECK로 전환해 재시도 루프를 차단합니다.", shortsId);
             }
         }
     }
