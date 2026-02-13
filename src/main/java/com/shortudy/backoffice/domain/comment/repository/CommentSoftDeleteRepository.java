@@ -21,13 +21,14 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CommentSoftDeleteRepository {
 
-    private static final String COMMENT_TABLE = "comments";
+    private static final List<String> COMMENT_TABLE_CANDIDATES = List.of("comments", "comment");
     private static final Set<String> SOFT_DELETE_COLUMNS = Set.of("deleted_at", "is_deleted", "status");
 
     private final JdbcTemplate jdbcTemplate;
 
     public void softDeleteByCommentId(Long commentId, CommentDeleteReason deleteReason) {
-        Set<String> columns = getTableColumns(COMMENT_TABLE);
+        String commentTable = resolveCommentTable();
+        Set<String> columns = getTableColumns(commentTable);
         if (columns.isEmpty()) {
             throw new BaseException(ErrorCode.COMMENT_SOFT_DELETE_UNSUPPORTED);
         }
@@ -65,12 +66,21 @@ public class CommentSoftDeleteRepository {
             throw new BaseException(ErrorCode.COMMENT_SOFT_DELETE_UNSUPPORTED);
         }
 
-        String sql = "update " + COMMENT_TABLE + " set " + String.join(", ", setClauses) + " where " + idColumn + " = ?";
+        String sql = "update " + commentTable + " set " + String.join(", ", setClauses) + " where " + idColumn + " = ?";
         params.add(commentId);
         int updated = jdbcTemplate.update(sql, params.toArray());
         if (updated == 0) {
             throw new BaseException(ErrorCode.COMMENT_SOFT_DELETE_TARGET_NOT_FOUND);
         }
+    }
+
+    private String resolveCommentTable() {
+        for (String tableName : COMMENT_TABLE_CANDIDATES) {
+            if (!getTableColumns(tableName).isEmpty()) {
+                return tableName;
+            }
+        }
+        throw new BaseException(ErrorCode.COMMENT_SOFT_DELETE_UNSUPPORTED);
     }
 
     private Set<String> getTableColumns(String tableName) {

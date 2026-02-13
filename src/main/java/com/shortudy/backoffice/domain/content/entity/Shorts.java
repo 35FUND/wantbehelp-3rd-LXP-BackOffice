@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,8 +67,7 @@ public class Shorts extends BaseEntity {
     // DB enum 문자열(REJECT, PUBLISHED, AI_CHECK, PENDING)로 저장
     private ShortsStatus status;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "reject_reason")
+    @Transient
     private ShortsRejectReason rejectReason;
 
     @Builder

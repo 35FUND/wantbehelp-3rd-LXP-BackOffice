@@ -1,6 +1,5 @@
 package com.shortudy.backoffice.domain.content.entity;
 
-import com.shortudy.backoffice.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "keyword")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Keyword extends BaseEntity {
+public class Keyword {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
