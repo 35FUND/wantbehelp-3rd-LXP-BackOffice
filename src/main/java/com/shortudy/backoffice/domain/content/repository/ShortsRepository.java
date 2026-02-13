@@ -42,20 +42,6 @@ public interface ShortsRepository extends JpaRepository<Shorts, Long> {
     long countByStatus(ShortsStatus status);
 
     /**
-     * 기간 내 생성된 전체 숏츠 개수를 조회한다.
-     */
-    long countByCreatedAtGreaterThanEqualAndCreatedAtLessThan(LocalDateTime from, LocalDateTime to);
-
-    /**
-     * 기간 내 생성된 특정 상태 숏츠 개수를 조회한다.
-     */
-    long countByStatusAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(
-            ShortsStatus status,
-            LocalDateTime from,
-            LocalDateTime to
-    );
-
-    /**
      * 게시 완료(PUBLISHED)된 숏츠를 published_at 기준으로 일 단위 집계한다.
      * - from 이상, to 미만의 반열린 구간을 사용한다.
      * - JPQL function('date')를 사용해 시간 정보를 제거한다.

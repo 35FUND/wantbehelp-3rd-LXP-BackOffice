@@ -36,7 +36,7 @@ public class BackofficeCommentReportSummaryResponse {
                 .reason(report.getReason())
                 .actionReason(report.getActionReason())
                 .status(report.getStatus())
-                .createdAt(report.getCreatedAt())
+                .createdAt(null)
                 .commentContent(null)
                 .commentWriterId(null)
                 .shortsId(null)

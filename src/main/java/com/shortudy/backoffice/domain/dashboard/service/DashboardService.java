@@ -54,13 +54,8 @@ public class DashboardService {
         int safeDays = normalizeDays(days);
         DateRange range = resolveKoreaDateRange(safeDays);
 
-        // 동일 기간 내 생성된 shorts 기준으로 전환율을 계산한다.
-        long totalCount = shortsRepository.countByCreatedAtGreaterThanEqualAndCreatedAtLessThan(range.from(), range.to());
-        long publishedCount = shortsRepository.countByStatusAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(
-                ShortsStatus.PUBLISHED,
-                range.from(),
-                range.to()
-        );
+        long totalCount = shortsRepository.count();
+        long publishedCount = shortsRepository.countByStatus(ShortsStatus.PUBLISHED);
 
         double conversionRate = 0.0;
         if (totalCount > 0) {

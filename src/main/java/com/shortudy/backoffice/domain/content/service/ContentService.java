@@ -50,9 +50,8 @@ public class ContentService {
      * 키워드 목록 조회
      */
     public List<KeywordListResponse> getKeywords() {
-        return keywordRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
-                .stream()
-                .map(KeywordListResponse::from)
+        return keywordRepository.findKeywordSummaries().stream()
+                .map(keyword -> new KeywordListResponse(keyword.getId(), keyword.getName()))
                 .collect(Collectors.toList());
     }
 

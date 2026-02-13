@@ -34,7 +34,7 @@ public class BackofficeShortsReviewController {
     @GetMapping
     public ApiResponse<ShortsReviewPageResponse> getReviewItems(
             @RequestParam(required = false) ShortsStatus status,
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ApiResponse.success(shortsReviewService.getReviewItems(status, pageable));
     }

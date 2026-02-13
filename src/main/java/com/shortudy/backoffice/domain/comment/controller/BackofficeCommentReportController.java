@@ -36,7 +36,7 @@ public class BackofficeCommentReportController {
     public ApiResponse<BackofficePageResponse<BackofficeCommentReportSummaryResponse>> getReports(
             @RequestParam(required = false) ReportStatus status,
             @RequestParam(required = false, defaultValue = "") String keyword,
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ApiResponse.success(commentReportService.findBackofficeReports(status, keyword, pageable));
     }

@@ -27,7 +27,7 @@ public class CommentReportResponse {
                 .reporterId(report.getReporterId())
                 .reason(report.getReason())
                 .status(report.getStatus())
-                .createdAt(report.getCreatedAt())
+                .createdAt(null)
                 .build();
     }
 }

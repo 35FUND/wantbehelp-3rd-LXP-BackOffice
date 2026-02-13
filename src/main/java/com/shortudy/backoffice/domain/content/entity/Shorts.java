@@ -1,6 +1,5 @@
 package com.shortudy.backoffice.domain.content.entity;
 
-import com.shortudy.backoffice.global.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,7 +24,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "shorts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Shorts extends BaseEntity {
+public class Shorts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

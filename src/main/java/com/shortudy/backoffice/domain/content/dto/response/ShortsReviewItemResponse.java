@@ -35,7 +35,7 @@ public class ShortsReviewItemResponse {
                 .status(shorts.getStatus())
                 .shortsStatusDescription(resolveShortsStatusDescription(shorts, latestResult))
                 .videoUrl(shorts.getVideoUrl())
-                .createdAt(shorts.getCreatedAt())
+                .createdAt(shorts.getPublishedAt())
                 .inspectionResult(latestResult == null ? null : ShortsInspectionResultResponse.from(latestResult))
                 .build();
     }
