@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ReportStatus {
     PENDING("대기중"),
-    PROCESSED("처리완료"),
-    REJECTED("반려");
+    PROCESSED("통과"),
+    REJECTED("삭제");
 
     private final String description;
 }

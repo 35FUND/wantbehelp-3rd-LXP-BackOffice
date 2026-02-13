@@ -2,9 +2,11 @@ package com.shortudy.backoffice.domain.comment.service;
 
 import com.shortudy.backoffice.domain.comment.dto.response.BackofficeCommentReportSummaryResponse;
 import com.shortudy.backoffice.domain.comment.dto.response.BackofficePageResponse;
+import com.shortudy.backoffice.domain.comment.entity.CommentDeleteReason;
 import com.shortudy.backoffice.domain.comment.entity.CommentReport;
 import com.shortudy.backoffice.domain.comment.entity.ReportStatus;
 import com.shortudy.backoffice.domain.comment.repository.CommentReportRepository;
+import com.shortudy.backoffice.domain.comment.repository.CommentSoftDeleteRepository;
 import com.shortudy.backoffice.domain.user.entity.User;
 import com.shortudy.backoffice.domain.user.repository.UserRepository;
 import com.shortudy.backoffice.global.error.BaseException;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 public class CommentReportService {
 
     private final CommentReportRepository commentReportRepository;
+    private final CommentSoftDeleteRepository commentSoftDeleteRepository;
     private final UserRepository userRepository;
 
     /**
@@ -111,12 +114,17 @@ public class CommentReportService {
     }
 
     /**
-     * 신고를 반려 상태로 변경합니다.
+     * 신고 댓글을 소프트 삭제하고 신고 상태를 삭제로 변경합니다.
      */
     @Transactional
-    public void rejectReport(Long reportId) {
+    public void deleteReportedComment(Long reportId, CommentDeleteReason deleteReason) {
+        if (deleteReason == null) {
+            throw new BaseException(ErrorCode.COMMENT_DELETE_REASON_REQUIRED);
+        }
+
         CommentReport report = getReportOrThrow(reportId);
-        report.reject();
+        commentSoftDeleteRepository.softDeleteByCommentId(report.getCommentId(), deleteReason);
+        report.reject(deleteReason);
     }
 
     private CommentReport getReportOrThrow(Long reportId) {

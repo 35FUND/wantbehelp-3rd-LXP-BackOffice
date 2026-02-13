@@ -8,6 +8,7 @@ import com.shortudy.backoffice.domain.content.dto.response.ShortsReviewItemRespo
 import com.shortudy.backoffice.domain.content.dto.response.ShortsReviewPageResponse;
 import com.shortudy.backoffice.domain.content.entity.Shorts;
 import com.shortudy.backoffice.domain.content.entity.ShortsInspectionResult;
+import com.shortudy.backoffice.domain.content.entity.ShortsRejectReason;
 import com.shortudy.backoffice.domain.content.entity.ShortsStatus;
 import com.shortudy.backoffice.domain.content.repository.ShortsInspectionResultRepository;
 import com.shortudy.backoffice.domain.content.repository.ShortsRepository;
@@ -134,10 +135,15 @@ public class ShortsReviewService {
     }
 
     @Transactional
-    public void updateStatus(Long shortsId, ShortsStatus status) {
+    public void updateStatus(Long shortsId, ShortsStatus status, ShortsRejectReason rejectReason) {
         Shorts shorts = shortsRepository.findById(shortsId)
                 .orElseThrow(() -> new BaseException(ErrorCode.CONTENT_NOT_FOUND));
-        shorts.changeStatus(status);
+
+        if (status == ShortsStatus.REJECT && rejectReason == null) {
+            throw new BaseException(ErrorCode.CONTENT_REJECT_REASON_REQUIRED);
+        }
+
+        shorts.changeStatus(status, rejectReason);
     }
 
     @Transactional

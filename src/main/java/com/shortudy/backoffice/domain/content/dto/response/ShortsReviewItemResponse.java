@@ -33,15 +33,19 @@ public class ShortsReviewItemResponse {
                 .categoryId(shorts.getCategoryId())
                 .title(shorts.getTitle())
                 .status(shorts.getStatus())
-                .shortsStatusDescription(resolveShortsStatusDescription(shorts.getStatus(), latestResult))
+                .shortsStatusDescription(resolveShortsStatusDescription(shorts, latestResult))
                 .videoUrl(shorts.getVideoUrl())
                 .createdAt(shorts.getCreatedAt())
                 .inspectionResult(latestResult == null ? null : ShortsInspectionResultResponse.from(latestResult))
                 .build();
     }
 
-    private static String resolveShortsStatusDescription(ShortsStatus status, ShortsInspectionResult latestResult) {
+    private static String resolveShortsStatusDescription(Shorts shorts, ShortsInspectionResult latestResult) {
+        ShortsStatus status = shorts.getStatus();
         if (status == ShortsStatus.REJECT) {
+            if (shorts.getRejectReason() != null) {
+                return shorts.getRejectReason().getDescription();
+            }
             String rejectReason = latestResult == null ? null : latestResult.getReason();
             return (rejectReason == null || rejectReason.isBlank()) ? status.getDescription() : rejectReason;
         }

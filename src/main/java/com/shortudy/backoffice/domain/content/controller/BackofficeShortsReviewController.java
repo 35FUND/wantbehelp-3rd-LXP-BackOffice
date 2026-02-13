@@ -54,7 +54,7 @@ public class BackofficeShortsReviewController {
             @PathVariable Long shortsId,
             @Valid @RequestBody UpdateShortsStatusRequest request
     ) {
-        shortsReviewService.updateStatus(shortsId, request.getStatus());
+        shortsReviewService.updateStatus(shortsId, request.getStatus(), request.getRejectReason());
         return ApiResponse.success(null, "영상 상태가 변경되었습니다.");
     }
 }

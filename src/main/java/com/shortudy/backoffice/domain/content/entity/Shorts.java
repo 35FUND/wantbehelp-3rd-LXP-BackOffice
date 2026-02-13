@@ -66,6 +66,10 @@ public class Shorts extends BaseEntity {
     // DB enum 문자열(REJECT, PUBLISHED, AI_CHECK, PENDING)로 저장
     private ShortsStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reject_reason")
+    private ShortsRejectReason rejectReason;
+
     @Builder
     public Shorts(Long userId,
                   Long categoryId,
@@ -77,7 +81,8 @@ public class Shorts extends BaseEntity {
                   Integer likeCount,
                   Long viewCount,
                   LocalDateTime publishedAt,
-                  ShortsStatus status) {
+                  ShortsStatus status,
+                  ShortsRejectReason rejectReason) {
         this.userId = userId;
         this.categoryId = categoryId;
         this.title = title;
@@ -89,13 +94,20 @@ public class Shorts extends BaseEntity {
         this.viewCount = viewCount;
         this.publishedAt = publishedAt;
         this.status = status;
+        this.rejectReason = rejectReason;
     }
 
     /**
      * 검수 상태를 변경한다.
      */
-    public void changeStatus(ShortsStatus status) {
+    public void changeStatus(ShortsStatus status, ShortsRejectReason rejectReason) {
         this.status = status;
+
+        if (status == ShortsStatus.REJECT) {
+            this.rejectReason = rejectReason;
+        } else {
+            this.rejectReason = null;
+        }
 
         if (status == ShortsStatus.PUBLISHED) {
             if (this.publishedAt == null) {
@@ -112,5 +124,6 @@ public class Shorts extends BaseEntity {
      */
     public void markAiCheck() {
         this.status = ShortsStatus.AI_CHECK;
+        this.rejectReason = null;
     }
 }

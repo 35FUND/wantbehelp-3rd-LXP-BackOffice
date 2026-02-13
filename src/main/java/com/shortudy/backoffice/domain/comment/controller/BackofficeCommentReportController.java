@@ -1,10 +1,12 @@
 package com.shortudy.backoffice.domain.comment.controller;
 
+import com.shortudy.backoffice.domain.comment.dto.request.DeleteCommentReportRequest;
 import com.shortudy.backoffice.domain.comment.dto.response.BackofficeCommentReportSummaryResponse;
 import com.shortudy.backoffice.domain.comment.dto.response.BackofficePageResponse;
 import com.shortudy.backoffice.domain.comment.entity.ReportStatus;
 import com.shortudy.backoffice.domain.comment.service.CommentReportService;
 import com.shortudy.backoffice.global.common.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,11 +59,14 @@ public class BackofficeCommentReportController {
     }
 
     /**
-     * 신고 반려 처리
+     * 신고 댓글 삭제 처리
      */
-    @PatchMapping("/{reportId}/reject")
-    public ApiResponse<Void> rejectReport(@PathVariable Long reportId) {
-        commentReportService.rejectReport(reportId);
-        return ApiResponse.success(null, "신고가 반려 처리되었습니다.");
+    @PatchMapping("/{reportId}/delete")
+    public ApiResponse<Void> deleteReportedComment(
+            @PathVariable Long reportId,
+            @Valid @RequestBody DeleteCommentReportRequest request
+    ) {
+        commentReportService.deleteReportedComment(reportId, request.getReason());
+        return ApiResponse.success(null, "댓글이 소프트 삭제 처리되었습니다.");
     }
 }

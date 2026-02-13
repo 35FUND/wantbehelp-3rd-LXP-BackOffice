@@ -1,5 +1,6 @@
 package com.shortudy.backoffice.domain.content.dto.request;
 
+import com.shortudy.backoffice.domain.content.entity.ShortsRejectReason;
 import com.shortudy.backoffice.domain.content.entity.ShortsStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -12,4 +13,6 @@ public class UpdateShortsStatusRequest {
 
     @NotNull
     private ShortsStatus status;
+
+    private ShortsRejectReason rejectReason;
 }

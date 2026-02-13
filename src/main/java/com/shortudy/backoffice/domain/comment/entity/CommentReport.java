@@ -35,6 +35,9 @@ public class CommentReport extends BaseEntity {
     @Column(nullable = false)
     private ReportStatus status; // 신고 처리 상태
 
+    @Column
+    private String actionReason; // 운영자 처리 사유
+
     @Builder
     public CommentReport(Long commentId, Long reporterId, String reason) {
         this.commentId = commentId;
@@ -46,11 +49,13 @@ public class CommentReport extends BaseEntity {
     public void process() {
         validateNotHandled();
         this.status = ReportStatus.PROCESSED;
+        this.actionReason = null;
     }
 
-    public void reject() {
+    public void reject(CommentDeleteReason deleteReason) {
         validateNotHandled();
         this.status = ReportStatus.REJECTED;
+        this.actionReason = deleteReason.getDescription();
     }
 
     private void validateNotHandled() {

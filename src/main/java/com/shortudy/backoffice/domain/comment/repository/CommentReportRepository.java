@@ -28,19 +28,21 @@ public interface CommentReportRepository extends JpaRepository<CommentReport, Lo
             value = """
                     select cr
                     from CommentReport cr
-                    where (:status is null or cr.status = :status)
-                      and (:keyword is null or :keyword = ''
-                           or lower(cr.reason) like lower(concat('%', :keyword, '%'))
-                           or str(cr.commentId) like concat('%', :keyword, '%'))
-                    """,
+                     where (:status is null or cr.status = :status)
+                       and (:keyword is null or :keyword = ''
+                            or lower(cr.reason) like lower(concat('%', :keyword, '%'))
+                            or lower(coalesce(cr.actionReason, '')) like lower(concat('%', :keyword, '%'))
+                            or str(cr.commentId) like concat('%', :keyword, '%'))
+                     """,
             countQuery = """
-                    select count(cr)
-                    from CommentReport cr
-                    where (:status is null or cr.status = :status)
-                      and (:keyword is null or :keyword = ''
-                           or lower(cr.reason) like lower(concat('%', :keyword, '%'))
-                           or str(cr.commentId) like concat('%', :keyword, '%'))
-                    """
+                     select count(cr)
+                     from CommentReport cr
+                     where (:status is null or cr.status = :status)
+                       and (:keyword is null or :keyword = ''
+                            or lower(cr.reason) like lower(concat('%', :keyword, '%'))
+                            or lower(coalesce(cr.actionReason, '')) like lower(concat('%', :keyword, '%'))
+                            or str(cr.commentId) like concat('%', :keyword, '%'))
+                     """
     )
     Page<CommentReport> search(@Param("status") ReportStatus status, @Param("keyword") String keyword, Pageable pageable);
 }
