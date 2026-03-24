@@ -1,5 +1,6 @@
 package com.shortudy.backoffice.domain.comment.entity;
 
+import com.shortudy.backoffice.global.common.BaseEntity;
 import com.shortudy.backoffice.global.error.BaseException;
 import com.shortudy.backoffice.global.error.ErrorCode;
 import jakarta.persistence.*;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "comment_reports")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentReport {
+public class CommentReport extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
